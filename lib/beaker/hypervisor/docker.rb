@@ -283,7 +283,7 @@ module Beaker
             RUN pacman -S --noconfirm openssh #{Beaker::HostPrebuiltSteps::ARCHLINUX_PACKAGES.join(' ')}
             RUN ssh-keygen -A
             RUN sed -ri 's/^#?UsePAM .*/UsePAM no/' /etc/ssh/sshd_config
-            RUN systecmtl enable sshd
+            RUN systemctl enable sshd
           EOF
         else
           # TODO add more platform steps here
