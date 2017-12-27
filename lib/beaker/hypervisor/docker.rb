@@ -224,8 +224,8 @@ module Beaker
           dockerfile = File.read(host['dockerfile'])
         else
           raise "requested Dockerfile #{host['dockerfile']} does not exist"
-        end 
-      else 
+        end
+      else
         raise("Docker image undefined!") if (host['image']||= nil).to_s.empty?
 
         # specify base image
@@ -271,6 +271,12 @@ module Beaker
             RUN zypper -n in openssh #{Beaker::HostPrebuiltSteps::SLES_PACKAGES.join(' ')}
             RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
             RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+            RUN sed -ri 's/^#?UsePAM .*/UsePAM no/' /etc/ssh/sshd_config
+          EOF
+        when /archlinux/
+          dockerfile += <<-EOF
+            RUN pacman -S --noconfirm openssh #{Beaker::HostPrebuiltSteps::ARCHLINUX_PACKAGES.join(' ')}
+            RUN ssh-keygen -A
             RUN sed -ri 's/^#?UsePAM .*/UsePAM no/' /etc/ssh/sshd_config
           EOF
         else

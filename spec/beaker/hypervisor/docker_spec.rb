@@ -15,7 +15,8 @@ module Beaker
     "cumulus-2.2-x86_64",
     "fedora-22-x86_64",
     "centos-7-x86_64",
-    "sles-12-x86_64"
+    "sles-12-x86_64",
+    "archlinux-2017.12.27-x86_64"
   ]
 
   describe Docker do
@@ -524,6 +525,16 @@ module Beaker
 
           expect( dockerfile ).to be =~ /RUN dnf install -y sudo/
         end
+      end
+
+      it 'should use pacman on archlinux' do
+        FakeFS.deactivate!
+        dockerfile = docker.send(:dockerfile_for, {
+          'platform' => 'archlinux-current-x86_64',
+          'image' => 'foobar',
+        })
+
+        expect( dockerfile ).to be =~ /RUN pacman -S --noconfirm openssh/
       end
 
       it 'should use user dockerfile if specified' do
