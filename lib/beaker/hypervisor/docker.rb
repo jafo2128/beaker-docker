@@ -94,6 +94,10 @@ module Beaker
             end
           end
 
+          if host['docker_cap_add']
+            container_opts['HostConfig']['CapAdd'] = host['docker_cap_add']
+          end
+
           if @options[:provision]
             if host['docker_container_name']
               container_opts['name'] = host['docker_container_name']

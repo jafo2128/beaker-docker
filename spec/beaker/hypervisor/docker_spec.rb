@@ -306,6 +306,30 @@ module Beaker
         docker.provision
       end
 
+      it 'should create a container with capabilities added' do
+        hosts.each_with_index do |host, index|
+          host['docker_cap_add'] = ['NET_ADMIN', 'SYS_ADMIN']
+
+          expect( ::Docker::Container ).to receive(:create).with({
+            'Image' => image.id,
+            'Hostname' => host.name,
+            'HostConfig' => {
+              'PortBindings' => {
+                '22/tcp' => [{ 'HostPort' => /\b\d{4}\b/, 'HostIp' => '0.0.0.0'}]
+              },
+              'PublishAllPorts' => true,
+              'Privileged' => true,
+              'RestartPolicy' => {
+                'Name' => 'always'
+              },
+              'CapAdd' => ['NET_ADMIN', 'SYS_ADMIN']
+            }
+          })
+        end
+
+        docker.provision
+      end
+
       it 'should start the container' do
         expect( container ).to receive(:start)
 
